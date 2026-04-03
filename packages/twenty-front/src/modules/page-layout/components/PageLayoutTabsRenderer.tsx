@@ -133,9 +133,15 @@ export const PageLayoutTabsRenderer = () => {
 
   const SYSTEM_OBJECT_TABS = ['Home', 'Timeline', 'Overview', 'Flow'];
 
+  const isCustomAppTab = (tab: { widgets: Array<{ type: string }> }) =>
+    tab.widgets.some(
+      (widget) => widget.type === 'FRONT_COMPONENT' || widget.type === 'IFRAME',
+    );
+
   const tabsForCurrentObject = isSystemObject
-    ? tabsWithVisibleWidgets.filter((tab) =>
-        SYSTEM_OBJECT_TABS.includes(tab.title),
+    ? tabsWithVisibleWidgets.filter(
+        (tab) =>
+          SYSTEM_OBJECT_TABS.includes(tab.title) || isCustomAppTab(tab),
       )
     : tabsWithVisibleWidgets;
 

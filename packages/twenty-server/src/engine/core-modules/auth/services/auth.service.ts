@@ -628,6 +628,11 @@ export class AuthService {
     await this.appTokenRepository.save(token);
 
     redirectUriValidation.parsed.searchParams.set('code', authorizationCode);
+    // Match the issuer published in OAuth discovery (RFC 9207).
+    redirectUriValidation.parsed.searchParams.set(
+      'iss',
+      this.twentyConfigService.get('SERVER_URL'),
+    );
 
     if (authorizeAppInput.state) {
       redirectUriValidation.parsed.searchParams.set(

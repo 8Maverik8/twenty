@@ -1,0 +1,120 @@
+{
+  "schema": 1,
+  "project": "twenty-oauth-issuer-hotfix",
+  "description": "Scoped OAP-1792 native v2.4.0 issuer hotfix only; fails for other source/manifest changes. Protocol regression/native syntax, change-scope dependency review, secrets diff, three local SAST rules and independent exact-SHA source review. Full CRM/browser production acceptance separate. Unchanged baseline dependencies not claimed audited.",
+  "platforms": [
+    "Linux"
+  ],
+  "containment": "systemd",
+  "timeout_seconds": 900,
+  "env": {
+    "PATH": "{tool_home}/.local/share/project-audit/bin:{tool_home}/.local/bin:/opt/quality-runner-tools/node-tools/node_modules/.bin:/usr/local/bin:/usr/bin:/bin"
+  },
+  "checks": [
+    {
+      "id": "scope-dependencies",
+      "layer": "dependencies",
+      "argv": [
+        "{python}",
+        "scripts/oapps-hotfixes/oauth-issuer/check-scope.py",
+        "{reports}/dependency-scope.json"
+      ]
+    },
+    {
+      "id": "protocol",
+      "layer": "tests",
+      "argv": [
+        "node",
+        "--test",
+        "scripts/oapps-hotfixes/oauth-issuer/patch.test.mjs"
+      ],
+      "needs": [
+        "scope-dependencies"
+      ]
+    },
+    {
+      "id": "native-syntax",
+      "layer": "product",
+      "argv": [
+        "node",
+        "scripts/oapps-hotfixes/oauth-issuer/check-native.mjs"
+      ],
+      "needs": [
+        "protocol"
+      ]
+    },
+    {
+      "id": "secrets-hotfix",
+      "layer": "secrets",
+      "argv": [
+        "gitleaks",
+        "dir",
+        "scripts/oapps-hotfixes/oauth-issuer",
+        "--redact",
+        "--report-format",
+        "json",
+        "--report-path",
+        "{reports}/secrets-hotfix.json"
+      ],
+      "parser": "gitleaks",
+      "result_file": "secrets-hotfix.json"
+    },
+    {
+      "id": "secrets-diff",
+      "layer": "secrets",
+      "argv": [
+        "gitleaks",
+        "git",
+        ".",
+        "--redact",
+        "--log-opts=2c332186a1c5a86df9f54a7467eed426aaa2fa52..HEAD",
+        "--report-format",
+        "json",
+        "--report-path",
+        "{reports}/secrets-diff.json"
+      ],
+      "parser": "gitleaks",
+      "result_file": "secrets-diff.json"
+    },
+    {
+      "id": "sast-runtime",
+      "layer": "sast",
+      "argv": [
+        "semgrep",
+        "scan",
+        "--metrics=off",
+        "--disable-version-check",
+        "--error",
+        "--config",
+        "scripts/oapps-hotfixes/oauth-issuer/semgrep.yml",
+        "--json",
+        "--output",
+        "{reports}/sast.json",
+        "scripts/oapps-hotfixes/oauth-issuer/patch.mjs",
+        "packages/twenty-server/src/engine/core-modules/auth/services/auth.service.ts"
+      ],
+      "parser": "semgrep",
+      "result_file": "sast.json"
+    },
+    {
+      "id": "independent-review",
+      "layer": "engineering",
+      "argv": [
+        "{python}",
+        "{runner}",
+        "_evidence",
+        "{reports}/engineering.json"
+      ],
+      "parser": "evidence",
+      "result_file": "engineering.json"
+    }
+  ],
+  "required_layers": [
+    "engineering",
+    "tests",
+    "product",
+    "secrets",
+    "dependencies",
+    "sast"
+  ]
+}

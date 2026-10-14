@@ -1,0 +1,8 @@
+{
+  "image": "twentycrm/twenty:v2.4.0",
+  "target": "/app/packages/twenty-server/dist/engine/core-modules/auth/services/auth.service.js",
+  "before_sha256": "98453bebc6cda7db1a0e280fba3c9d8d9e6ecbf03eba90b898655f40735204b0",
+  "after_sha256": "35549cb52532c9c8cdf1767be3c4d4103ce5fae8f5aa29bcbee4d7b2aaaf38da",
+  "before": "        redirectUriValidation.parsed.searchParams.set('code', authorizationCode);",
+  "after": "        redirectUriValidation.parsed.searchParams.set('code', authorizationCode);\n        redirectUriValidation.parsed.searchParams.set('iss', this.twentyConfigService.get('SERVER_URL'));"
+}

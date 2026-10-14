@@ -1,0 +1,9 @@
+{
+  "base": "2c332186a1c5a86df9f54a7467eed426aaa2fa52",
+  "source": "packages/twenty-server/src/engine/core-modules/auth/services/auth.service.ts",
+  "source_before_sha256": "54ce3c8503aadbf9bc1031e5f9530c86071fdfde7e141b5ab0103abf667899d7",
+  "source_after_sha256": "a4b5301479030418cd1c53ed01c43f574d7c7ad4a34b8d94bb2f7be5777ecc63",
+  "allowed_prefix": "scripts/oapps-hotfixes/oauth-issuer/",
+  "dependency_manifests_changed": false,
+  "scope": "One issuer response field; immutable existing runtime image; no new package dependencies"
+}

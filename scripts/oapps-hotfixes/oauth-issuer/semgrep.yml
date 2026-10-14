@@ -1,0 +1,20 @@
+rules:
+  - id: oauth-issuer-dynamic-code
+    languages: [javascript, typescript]
+    severity: ERROR
+    message: Dynamic execution in runtime patch is prohibited.
+    pattern-either:
+      - pattern: eval(...)
+      - pattern: new Function(...)
+  - id: oauth-issuer-shell-execution
+    languages: [javascript, typescript]
+    severity: ERROR
+    message: Runtime patch must not invoke a shell.
+    pattern-either:
+      - pattern: exec(...)
+      - pattern: execSync(...)
+  - id: oauth-issuer-disabled-tls
+    languages: [javascript, typescript]
+    severity: ERROR
+    message: TLS protections must remain enabled.
+    pattern: "{rejectUnauthorized: false, ...}"
